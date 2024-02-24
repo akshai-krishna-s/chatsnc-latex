@@ -1,0 +1,47 @@
+# .gitignore for LaTeX
+
+# Temporary files
+*.aux
+*.glo
+*.idx
+*.log
+*.toc
+*.ist
+*.acn
+*.acr
+*.alg
+*.bbl
+*.blg
+*.dvi
+*.glg
+*.gls
+*.ilg
+*.ind
+*.lof
+*.lot
+*.maf
+*.mtc
+*.mtc1
+*.out
+*.synctex.gz
+
+# PDF output
+*.pdf
+
+# Compiled files
+*.lo
+*.la
+*.so
+
+# Backup files
+*~
+
+# Other files
+*.cls
+*.sty
+*.tdo
+*.fls
+*.fdb_latexmk
+*.run.xml
+*.bcf
+*.synctex(busy)
