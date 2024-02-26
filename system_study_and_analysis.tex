@@ -16,7 +16,7 @@ GPT-3, or Generative Pre-trained Transformer 3, has garnered significant attenti
 ChatGPT is a chatbot developed by OpenAI and launched on November 30, 202234. Based on a large language model, it enables users to refine and steer a conversation towards a desired length, format, style, level of detail, and language4. It works by predicting the next word in a given text, based on the patterns it has learned from a massive amount of data during its training process5.
 
 However, the effectiveness of these LLMs is hindered by concerns surrounding bias, inaccuracy, and toxicity, which limit their broader adoption and raise ethical concerns1. Despite these challenges, the existing system of LLMs has made significant strides in the field of AI and continues to evolve.
-\section{Drawbacks of Existing System}
+\subsection{Drawbacks of Existing System}
 The existing system of Large Language Models (LLMs) and chatbots like ChatGPT, while impressive, have several limitations:
 \begin{enumerate}
   \item \textbf{Limited Understanding}: LLMs may have a limited understanding of the context and meaning of the language they process. They lack the ability to understand nuances, cultural references, and context-dependent meanings. This can lead to inaccurate or inappropriate responses to certain inputs. For example, they might not understand the difference between a genuine request for information and a rhetorical question, leading to responses that may seem out of place or irrelevant.
@@ -41,7 +41,7 @@ The working of RAG can be divided into several steps:
   \item \textbf{Response Generation}: Finally, a generative model is used to generate a response. This model takes the candidate responses from the previous step and generates a final response. This response is generated in a way that it is contextually relevant to the user query and is fluent and coherent in terms of language. The generative model is also usually a transformer-based model, which uses the context of the conversation and the candidate responses to generate a response.
 \end{enumerate}
 The key aspect of RAG is that it combines the strengths of retrieval-based and generative models. The retrieval component allows the model to leverage the information in the dataset, while the generative component allows the model to generate fluent and contextually relevant responses.
-\section{Advantages of Proposed System}
+\subsection{Advantages of Proposed System}
 Retrieval-Augmented Generation (RAG) offers several advantages that help overcome the limitations of traditional large language models (LLMs) like GPT-3. Here are some key advantages:
 \begin{enumerate}
   \item \textbf{Contextual Understanding}: RAG models have a better understanding of the context as they retrieve relevant documents from a dataset before generating a response. This allows them to provide more accurate and contextually relevant responses compared to traditional LLMs, which generate responses based solely on the input they receive.
@@ -51,17 +51,42 @@ Retrieval-Augmented Generation (RAG) offers several advantages that help overcom
   \item \textbf{Efficiency}: By separating the retrieval and generation processes, RAG models can efficiently handle complex tasks. They first narrow down the relevant information through retrieval and then focus on generating a response based on the retrieved information. This makes them more efficient compared to traditional LLMs, which need to consider the entire dataset while generating a response.
 \end{enumerate}
 In conclusion, RAG offers a robust solution for building chatbots by effectively combining the strengths of retrieval-based and generative models. It leverages the power of recent advancements in AI and LLMs to provide accurate, contextually relevant, and up-to-date responses.
+\section{Preparation of Requirements}
+The development of the chatbot for the college website required careful planning and preparation. The requirements were gathered and analyzed to ensure that the chatbot would meet the needs of the users and align with the goals of the project. The following are the key requirements that were identified:
+\subsection{Functional Requirements}
+\begin{enumerate}
+  \item \textbf{User Input Processing}: The chatbot should be able to process user inputs in the form of text queries, understand the intent behind the queries, and generate appropriate responses.
+  \item \textbf{Information Retrieval}: The chatbot should be able to retrieve relevant information from the college website to provide accurate and up-to-date responses to user queries.
+  \item \textbf{Response Generation}: The chatbot should be able to generate fluent and contextually relevant responses based on the user queries and the retrieved information.
+  \item \textbf{User Interaction}: The chatbot should be able to engage in natural and meaningful conversations with users, providing a seamless and user-friendly experience.
+  \item \textbf{Multi-turn Conversations}: The chatbot should be able to handle multi-turn conversations, where the user can ask follow-up questions or continue the conversation on a specific topic.
+  \item \textbf{Error Handling}: The chatbot should be able to handle errors and provide appropriate responses when it encounters queries that it cannot understand or process.
+  \item \textbf{User and Chat History Management}: The chatbot should be able to handle user data and chat history, storing them securely in the database for future reference.
+\end{enumerate}
+\subsection{Non-Functional Requirements}
+\begin{enumerate}
+  \item \textbf{Accuracy}: The chatbot should provide accurate and reliable information to users, ensuring that the responses are based on the most up-to-date information available on the college website.
+  \item \textbf{Performance}: The chatbot should be able to process user queries and generate responses in a timely manner, providing a responsive and efficient user experience.
+  \item \textbf{Security}: The chatbot should adhere to data privacy and security standards, ensuring that user data is protected and handled in a secure manner.
+  \item \textbf{User Experience}: The chatbot should provide a seamless and intuitive user experience, with a user-friendly interface and natural language interactions.
+\end{enumerate}
+\subsection{Technical Requirements}
+\begin{enumerate}
+  \item \textbf{Frontend}: The chatbot's user interface should be built using Vue.js to ensure a responsive and interactive user experience.
+  \item \textbf{Backend}: The backend should be built using FastAPI to handle requests and responses efficiently. The backend should also incorporate the Llama index for handling the LLM and RAG\@.
+  \item \textbf{Database}: PostgreSQL should be used as the database to store and manage data due to its robustness and reliability. The database should have tables for users and chat history.
+\end{enumerate}
 \section{Feasibility Study}
-A feasibility study is an essential step in the development of any system, including a Retrieval-Augmented Generation (RAG) chatbot. It helps determine whether the proposed system is viable and achievable within the given constraints. Here are some key aspects to consider:
+Before the commencement of the project, a feasibility study was conducted to assess the viability of the chatbot project for the college website. The study focused on the following areas:
 \subsection{Technical Feasibility}
-Assess whether the current technological resources are sufficient for the development and implementation of the RAG chatbot. This includes hardware requirements, software compatibility, and technical skills.
+The project is technically feasible as it leverages Vue.js for frontend development, which is known for its simplicity and flexibility. FastAPI, a modern, fast (high-performance), web framework for building APIs is used for backend development. It has a significant advantage in terms of speed and ease of use. The Llama index is used for handling the LLM and RAG, and PostgreSQL, a powerful, open-source object-relational database system, is used for data storage. Additionally, OpenAI's GPT-3.5 and their embedding model are used for language understanding and generation, which are known for their high performance and accuracy. These technologies are well-documented and widely supported, which makes the development process efficient and manageable.
 \subsection{Economic Feasibility}
-Evaluate the cost-effectiveness of the RAG chatbot. Consider the development costs, operational costs, and potential return on investment. The benefits should outweigh the costs for the project to be economically feasible.
+From an economic perspective, the project is feasible as the technologies used (Vue.js, FastAPI, Llama index, PostgreSQL) are open-source and free to use. While OpenAI's models are not open-source, they come at a reasonable cost.
 \subsection{Operational Feasibility}
-Determine whether the RAG chatbot can be integrated into the existing operational procedures. The chatbot should be user-friendly and its functionalities should align with the user's requirements.
+The proposed chatbot is operationally feasible as it is designed to interact with users in a natural, conversational manner, and assist them in navigating the college website and finding the information they need. It can handle user data and chat history, storing them securely in the database for future reference.
 \subsection{Legal and Ethical Feasibility}
-Ensure that the RAG chatbot complies with all relevant legal and ethical standards, including data privacy regulations and AI ethics guidelines.
+The project complies with all relevant data protection and privacy laws. User data is handled securely, and privacy is maintained.
 \subsection{Schedule Feasibility}
-Develop a realistic timeline for the project. Consider the time required for each phase of the project, from development and testing to implementation and review.
+Given the scope of the project and the technologies used, the development of the chatbot is achievable within the proposed timeline.
 \section{Data Flow Diagram}
 To be filled 
