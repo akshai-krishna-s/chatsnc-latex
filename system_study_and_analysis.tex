@@ -88,5 +88,90 @@ The proposed chatbot is operationally feasible as it is designed to interact wit
 The project complies with all relevant data protection and privacy laws. User data is handled securely, and privacy is maintained.
 \subsection{Schedule Feasibility}
 Given the scope of the project and the technologies used, the development of the chatbot is achievable within the proposed timeline.
+\section{Software Technology Overview}
+The chatbot for the college website is built using a combination of frontend and backend technologies. The following technologies are used in the development of the chatbot:
+\subsection{Frontend Technologies}
+\subsubsection{Vue.js}
+Vue.js (commonly referred to as Vue; pronounced `view`) is an open-source model-view-viewmodel front end JavaScript library for building user interfaces and single-page applications. It was created by Evan You, and is maintained by him and the rest of the active core team members.\cite{enwiki:1201106318}\\\\
+Vue.js features an incrementally adaptable architecture that focuses on declarative rendering and component composition. The core library is focused on the view layer only. Advanced features required for complex applications such as routing, state management and build tooling are offered via officially maintained supporting libraries and packages.\cite{enwiki:1201106318}\\\\
+Features of Vue.js include:
+
+\begin{enumerate}
+  \item \textbf{Components}: Vue components extend basic HTML elements to encapsulate reusable code. At a high level, components are custom elements to which the Vue's compiler attaches behavior. In Vue, a component is essentially a Vue instance with pre-defined options.\cite{enwiki:1201106318}
+  \item \textbf{Templates}: Vue uses an HTML-based template syntax that allows binding the rendered DOM to the underlying Vue instance's data. All Vue templates are valid HTML that can be parsed by specification-compliant browsers and HTML parsers. Vue compiles the templates into virtual DOM render functions. A virtual Document Object Model (or `DOM`) allows Vue to render components in its memory before updating the browser. Combined with the reactivity system, Vue can calculate the minimal number of components to re-render and apply the minimal amount of DOM manipulations when the app state changes.\cite{enwiki:1201106318}
+  \item \textbf{Reactivity}: Vue features a reactivity system that uses plain JavaScript objects and optimized re-rendering. Each component keeps track of its reactive dependencies during its render, so the system knows precisely when to re-render, and which components to re-render.\cite{enwiki:1201106318}
+  \item \textbf{Routing}: A traditional disadvantage of single-page applications (SPAs) is the inability to share links to the exact `sub' page within a specific web page. Because SPAs serve their users only one URL-based response from the server (it typically serves index.html or index.vue), bookmarking certain screens or sharing links to specific sections is normally difficult if not impossible.\cite{enwiki:1201106318}
+
+  Vue provides an interface to change what is displayed on the page based on the current URL path - regardless of how it was changed (whether by emailed link, refresh, or in-page links). Additionally, using a front-end router allows for the intentional transition of the browser path when certain browser events (i.e.\ clicks) occur on buttons or links. Vue itself doesn't come with front-end hashed routing. But the open-source `vue-router' package provides an API to update the application's URL, supports the back button (navigating history), and email password resets or email verification links with authentication URL parameters. It supports mapping nested routes to nested components and offers fine-grained transition control. With Vue, developers are already composing applications with small building blocks building larger components. With vue-router added to the mix, components must merely be mapped to the routes they belong to, and parent/root routes must indicate where children should render.\cite{enwiki:1201106318}
+\end{enumerate}
+\subsubsection{Tailwind CSS}
+Tailwind CSS is an open source CSS framework. The main feature of this library is that, unlike other CSS frameworks like Bootstrap, it does not provide a series of predefined classes for elements such as buttons or tables. Instead, it creates a list of `utility' CSS classes that can be used to style each element by mixing and matching.\cite{enwiki:1206918069}
+
+For example, in other traditional systems, there would be a class message-warning that would apply a yellow background color and bold text. To achieve this result in Tailwind, one would have to apply a set of classes created by the library: bg-yellow-300 and font-bold.\cite{enwiki:1206918069}
+
+Features of Tailwind CSS include:
+\begin{enumerate}
+  \item \textbf{Utility classes}: The utility-first concept refers to the main differentiating feature of Tailwind. Instead of creating classes around components (button, panel, menu, textbox \ldots), classes are built around a specific style element (yellow color, bold font, very large text, center element\ldots). Each of these classes is called utility classes.
+  
+  There are many utility classes in Tailwind CSS that enable to control a large number of CSS properties like colors, border, display type (display), font size and font, layout, shadow\ldots\cite{enwiki:1206918069}
+  \item \textbf{Variants}: Tailwind offers the possibility to apply a utility class only in some situations through media queries, which is called a variant. The main use of variants is to design a responsive interface for various screen sizes. There are also variants for the different states an element can have, such as hover \: for when hovered, focus: when keyboard selected or active: when in use, or when the browser or operating system has dark mode enabled.\cite{enwiki:1206918069}
+
+  Variants have two parts: the condition to be met and the class that is applied if the condition is met. For example, the variant md:bg-yellow-400 will apply the class bg-yellow-400 if the screen size is greater than the value defined for md.\cite{enwiki:1206918069}
+  
+  Tailwind CSS is developed using JavaScript, runs via Node.js, and installs with environment package managers like npm or yarn.\cite{enwiki:1206918069}
+  \item \textbf{Settings and themes}: It is possible to configure the utility classes and variants that Tailwind offers through a configuration file usually named tailwind.config.js. In the configuration, one can set the values of the utility classes, such as the color-palette or the sizes between elements for margins.\cite{enwiki:1206918069}
+\end{enumerate}
+
+\subsubsection{Axios}
+Axios is a promise-based HTTP Client for node.js and the browser. It is isomorphic (= it can run in the browser and nodejs with the same codebase). On the server-side it uses the native node.js http module, while on the client (browser) it uses XMLHttpRequests.\cite{axios}\\\\
+Features of Axios include:
+\begin{itemize}
+  \item Make XMLHttpRequests from the browser
+  \item Make http requests from node.js
+  \item Supports the Promise API
+  \item Intercept request and response
+  \item Transform request and response data
+  \item Cancel requests
+  \item Timeouts
+  \item Query parameters serialization with support for nested entries
+  \item Posting HTML forms as JSON
+  \item Automatic JSON data handling in response
+  \item Progress capturing for browsers and node.js with extra info (speed rate, remaining time)
+  \item Setting bandwidth limits for node.js
+  \item Compatible with spec-compliant FormData and Blob (including node.js)
+  \item Client side support for protecting against XSRF
+\end{itemize}
+
+\subsection{Backend Technologies}
+\subsubsection{FastAPI}
+FastAPI is a modern, fast (high-performance), web framework for building APIs with Python 3.8+ based on standard Python type hints.\cite{fastapi}\\\\
+The key features are:
+\begin{itemize}
+  \item \textbf{Fast}: Very high performance, on par with NodeJS and Go (thanks to Starlette and Pydantic). One of the fastest Python frameworks available.
+  \item \textbf{Fast to code}: Increase the speed to develop features by about 200\%. 
+  \item \textbf{Fewer bugs}: Reduce about 40\% of human (developer) induced errors.
+  \item \textbf{Intuitive}: Great editor support. Completion everywhere. Less time debugging.
+  \item \textbf{Easy}: Designed to be easy to use and learn. Less time reading docs.
+  \item \textbf{Short}: Minimize code duplication. Multiple features from each parameter declaration. Fewer bugs.
+  \item \textbf{Robust}: Get production-ready code. With automatic interactive documentation.
+  \item \textbf{Standards-based}: Based on (and fully compatible with) the open standards for APIs: OpenAPI and JSON Schema.
+\end{itemize}
+\subsubsection{Llama Index}
+LlamaIndex is a data framework for Large Language Models (LLMs) based applications. LLMs like GPT-4 come pre-trained on massive public datasets, allowing for incredible natural language processing capabilities out of the box. However, their utility is limited without access to your own private data.
+
+LlamaIndex lets you ingest data from APIs, databases, PDFs, and more via flexible data connectors. This data is indexed into intermediate representations optimized for LLMs. LlamaIndex then allows natural language querying and conversation with your data via query engines, chat interfaces, and LLM-powered data agents. It enables your LLMs to access and interpret private data on large scales without retraining the model on newer data.
+
+LlamaIndex uses Retrieval Augmented Generation (RAG) systems that combine large language models with a private knowledge base. It generally consists of two stages: the indexing stage and the querying stage.\cite{datacamp}
+
+\subsubsection{PostgreSQL}
+
+PostgreSQL is a powerful, open source object-relational database system that uses and extends the SQL language combined with many features that safely store and scale the most complicated data workloads. The origins of PostgreSQL date back to 1986 as part of the POSTGRES project at the University of California at Berkeley and has more than 35 years of active development on the core platform.\cite{postgres}
+
+\subsubsection{Uvicorn}
+Uvicorn is an ASGI web server implementation for Python. Until recently Python has lacked a minimal low-level server/application interface for async frameworks. The ASGI specification fills this gap, and means we're now able to start building a common set of tooling usable across all async frameworks.Uvicorn currently supports HTTP/1.1 and WebSockets.
+
+Uvicorn is designed with particular attention to connection and resource management, in order to provide a robust server implementation. It aims to ensure graceful behavior to either server or client errors, and resilience to poor client behavior or denial of service attacks.\cite{uvicorn}
+
 \section{Data Flow Diagram}
 To be filled 
+

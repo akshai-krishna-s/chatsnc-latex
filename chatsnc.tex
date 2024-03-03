@@ -9,7 +9,8 @@
 \graphicspath{{figures/}}
 \linespread{1.3}
 \usepackage{titlesec}
-
+\usepackage{url}
+\usepackage[super,sort&compress]{natbib}
 \titleformat{\chapter}[display]{\normalfont\fontsize{20pt}{24pt}\bfseries\centering}{CHAPTER \thechapter}{20pt}{\Large}
 \titlespacing*{\chapter}{0pt}{-12pt}{24pt}
 
@@ -88,6 +89,7 @@
 \gdef\month{June 2021} %Month of Report submission
 \gdef\date{15-06-2021} %Date of signing the declaration
 
+\bibliographystyle{IEEEtran}
 \include{coverpage-2}
 
 \include{declaration}
@@ -111,10 +113,12 @@
 
 \include{system_study_and_analysis}
 
+\include{system_design}
+
 \appendix
 \include{appendix}
 
-\bibliographystyle{IEEEtran}
 \bibliography{mybib}
+
 
 \end{document}
