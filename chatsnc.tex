@@ -10,6 +10,21 @@
 \linespread{1.3}
 \usepackage{titlesec}
 \usepackage{url}
+\usepackage{fancyvrb}
+\usepackage{fvextra}
+\usepackage{listings}
+\usepackage{color} % for setting colors
+
+% set the default code style for Python
+\lstset{
+    language=Python,
+    stepnumber=1,
+    showstringspaces=false,
+    tabsize=1,
+    breaklines=true,
+    breakatwhitespace=false,
+}
+
 \usepackage[super,sort&compress]{natbib}
 \titleformat{\chapter}[display]{\normalfont\fontsize{20pt}{24pt}\bfseries\centering}{CHAPTER \thechapter}{20pt}{\Large}
 \titlespacing*{\chapter}{0pt}{-12pt}{24pt}
@@ -114,6 +129,8 @@
 \include{system_study_and_analysis}
 
 \include{system_design}
+
+\include{system-coding}
 
 \appendix
 \include{appendix}
