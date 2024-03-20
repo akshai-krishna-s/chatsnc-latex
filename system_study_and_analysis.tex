@@ -173,5 +173,120 @@ Uvicorn is an ASGI web server implementation for Python. Until recently Python h
 Uvicorn is designed with particular attention to connection and resource management, in order to provide a robust server implementation. It aims to ensure graceful behavior to either server or client errors, and resilience to poor client behavior or denial of service attacks.\cite{uvicorn}
 
 \section{Data Flow Diagram}
-To be filled 
 
+The development of the Data Flow Diagrams (DFD) for the chatbot application was a crucial step in visualizing the flow of data within the system. The DFDs were created in two levels: Level 0 (also known as the context diagram) and Level 1.\\
+Basic data flow diagram for the chatbot system is as follows:
+\begin{itemize}
+  \item Rectangle: \\
+    \includegraphics[width=0.2\textwidth]{Rectangle.png}\\ Represents an external entity.
+  \item Arrow: \\
+    \includegraphics[width=0.2\textwidth]{Arrow.png}\\ Represents the flow of data between the external entity and the system.
+  \item Circle: \\
+   \includegraphics[width=0.2\textwidth]{Oval.png}\\ Represents a process or action that takes place within the system.
+   \item Open Rectangle: \\
+    \includegraphics[width=0.2\textwidth]{Open_Rectangle.png}\\ Represents a data store.
+\end{itemize}
+
+\subsection{Level 0 DFD (Context Diagram) }
+ 
+The Level 0 DFD provides a high-level overview of the system. It encapsulates the entire system as a single process and illustrates the interaction between the system and external entities. In the context of the chatbot application, the external entities could include the User and the Database (Postgres). The User interacts with the system (Chatbot Application) which in turn interacts with the Database.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=.75\textwidth]{Level-0-DFD.png}
+  \caption{Level 0 DFD}\label{fig:level-0-dfd}
+\end{figure}
+
+\subsection{Level 1 DFD}
+The Level 1 DFD breaks down the main process of the Level 0 DFD into smaller sub-processes to provide a more detailed view of the system's operation. In the case of the chatbot application, the main process can be broken down into several sub-processes such as User Registration, User Login, Chat Generation, and Create/Update Chat History. Each of these sub-processes interacts with each other and with the Database to ensure the smooth operation of the chatbot application.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\textwidth]{Level-1-DFD.png}
+  \caption{Level 1 DFD}\label{fig:level-1-dfd}
+\end{figure}
+
+\section{Use Case Diagram}
+The Use Case Diagram for the chatbot application provides a visual representation of the system's functionality from the user's perspective. It illustrates the different use cases or interactions that a user can have with the system. The Use Case Diagram typically consists of actors, use cases, and the relationships between them.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=.75\textwidth]{UseCase.png}
+  \caption{Use Case Diagram}\label{fig:use-case-diagram}
+\end{figure}
+
+\subsection*{Actors}
+
+\begin{itemize}
+  \item \textbf{User}: The person interacting with the chatbot application.
+  \item \textbf{Systen}: The chatbot application itself, which includes the backend (Python FastAPI), frontend (JavaScript Vue.js), and the database (Postgres).
+\end{itemize}
+
+\subsection*{Use Cases}
+
+\begin{itemize}
+  \item \textbf{User Registration}: This use case involves the user creating a new account in the system.
+  \item \textbf{User Login}: This use case involves the user logging into the system using their credentials.
+  \item \textbf{Chat Generation}: This use case involves the user interacting with the chatbot. 
+  \item \textbf{View Chat History}: This use case involves the user viewing their past interactions with the chatbot.
+  \item \textbf{Handle LLM and RAG}: This use case involves the system handling Language Model (LLM) and Retrieval Augmented Generation (RAG) to generate chat responses.
+  \item \textbf{Manage Database}: This use case involves the system storing and retrieving user data and chat history from the Postgres database.
+\end{itemize}
+
+\section{Entity Relationship Diagram}
+
+The Entity Relationship Diagram (ERD) for the application illustrates the relationship between two primary entities: \textit{users} and \textit{chats}, which are housed within a public schema.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=.50\textwidth]{ERD.png}
+  \caption{Entity Relationship Diagram}\label{fig:erd}
+\end{figure}
+
+\subsection*{Users Entity}
+
+The \textit{users} entity contains the following attributes:
+
+\begin{itemize}
+  \item \textbf{id}: A unique identifier for each user.
+  \item \textbf{email}: The email address of the user.
+  \item \textbf{password}: The password of the user.
+  \item \textbf{created\_at}: The timestamp of user creation.
+\end{itemize}
+
+\subsection*{Chats Entity}
+
+The \textit{chats} entity contains the following attributes:
+
+\begin{itemize}
+  \item \textbf{id}: A unique identifier for each chat.
+  \item \textbf{user\_id}: Acts as a foreign key, linking each chat to a specific user in the \textit{users} entity.
+  \item \textbf{history}: Stores the chat history of the user.
+  \item \textbf{created\_at}: The timestamp of chat creation.
+\end{itemize}
+
+\section{System Flowchart}
+
+The system flowchart for the chatbot application outlines the user interaction process. Here's a description of the flowchart:
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=.75\textwidth]{flowchart.png}
+  \caption{System flowchart for user}\label{fig:flowchart}
+\end{figure}
+
+\begin{enumerate}
+  \item \textbf{Start}: The process begins at the “Start” node.
+  \item \textbf{User Interaction}: The user initiates interaction with the system.
+  \item \textbf{Login}: The user attempts to log in. This is a decision-making point in the flow.
+  \begin{itemize}
+    \item If the login is successful, the process moves to the next step.
+    \item If the login fails, the process loops back to the user for another login attempt.
+  \end{itemize}
+  \item \textbf{Post-Login Options}: After a successful login, the user has two options:
+  \begin{itemize}
+    \item Create a new chat.
+    \item Select a chat from the chat history.
+  \end{itemize}
+  \item \textbf{End}: The flow ends after the user selects an option post-login..
+\end{enumerate}
