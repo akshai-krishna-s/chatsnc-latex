@@ -1,0 +1,60 @@
+% chktex-file 44
+% chktex-file 18
+
+\chapter{System Testing}
+
+System testing is a critical phase in the software development lifecycle that validates the complete and fully integrated software product. The main purpose of system testing is to evaluate the system's compliance with the specified requirements.
+
+\section{Test Strategy}
+
+The system testing was carried out in a sequential manner, covering all the functional and non-functional areas of the chatbot application. The testing included the following:
+
+\begin{enumerate}
+\item \textbf{Functional Testing}: This was performed to verify that the chatbot responds correctly to the user queries, ensuring that the retrieval and generation of responses are functioning as expected.
+\item \textbf{User Registration and Login Testing}: This was conducted to ensure that the user registration, login, and error handling functionalities work as expected.
+\item \textbf{Performance Testing}: This was conducted to check the response time of the chatbot, ensuring that the system performs well under the workload.
+\item \textbf{Usability Testing}: This ensured that the chatbot is user-friendly and provides a satisfactory user experience.
+\item \textbf{Compatibility Testing}: This was performed to ensure that the chatbot works as expected across different platforms and devices.
+\end{enumerate}
+
+\section{Test Cases and Results}
+
+A comprehensive set of test cases were designed to cover all possible scenarios that the chatbot might encounter. Each test case consisted of a specific user query and the expected response from the chatbot. The actual responses from the chatbot were then compared with the expected responses.
+
+\subsection{Chat Generation Test Cases}
+
+\begin{table}[h!]
+  \centering
+  \begin{tabular}{|p{1.2cm}|p{3.3cm}|p{4cm}|p{4cm}|}
+  \hline
+  \textbf{Test Case No.} & \textbf{User Query} & \textbf{Expected Response} & \textbf{Actual Response} \\
+  \hline
+  1 & "Where is Multi Gym located?" & "The Multi Gym at SN College is located on the corner of North." & "The Multi Gym at SN College is located on the corner of North." \\
+  \hline
+  2 & "Who is the prinicpal?" & "The principal of SN College is Dr.\ S.V. Manoj." & "The principal of SN College is Dr.\ S.V. Manoj."\\
+  \hline
+
+  \end{tabular}
+  \caption{Test Cases for Chat Generation}
+\end{table}
+
+\subsection{User Registration and Login Test Cases}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|p{1.2cm}|p{4cm}|p{4cm}|p{3.4cm}|}
+\hline
+\textbf{Test Case No.} & \textbf{User Action} & \textbf{Expected Outcome} & \textbf{Actual Outcome} \\
+\hline
+1 & User attempts to register with valid details & Registration is successful & Registered successfully \\
+\hline
+2 & User attempts to login with correct credentials & Login is successful & Logged in successfully \\
+\hline
+3 & User attempts to login with incorrect credentials & Error message is displayed & Invalid credentials \\
+\hline
+\end{tabular}
+\caption{Test Cases for User Registration and Login}
+\end{table}
+
+The results of the system testing were highly satisfactory. The chatbot was able to handle a variety of queries and respond appropriately. The user registration and login functionalities were also tested and found to be working as expected. Any discrepancies found during the testing were logged, and necessary adjustments were made to the system to rectify these issues.
+

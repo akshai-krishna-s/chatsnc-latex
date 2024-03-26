@@ -14,10 +14,30 @@
 % chktex-file 8
 
 
+\chapter{System Coding and Unit Testing}
 
-\chapter{System Coding}
+\section{System Coding}
+
+\subsection{Program List}
 
 
+\begin{table}[h!]
+  \centering
+  \caption{Program List}
+  \vspace*{10pt}
+  \begin{tabular}{|p{4cm}|p{8cm}|}
+    \hline
+    \multicolumn{1}{|c|}{\textbf{Program Name}} & \multicolumn{1}{c|}{\textbf{Description}}\\ \hline
+    snc\_chat.py & Chat engine for the ChatSNC application\\ \hline
+    load\_index.py & Load documents as vector into the vector database\\ \hline
+    main.py & Main FastAPI application\\ \hline
+    auth.py & Authentication routes\\ \hline
+    chatsnc.py & ChatSNC routes\\ \hline
+    user.py & User routes\\ \hline
+  \end{tabular}
+\end{table}
+
+\subsection{Program Code}
   
 \textbf{snc\_chat.py}
 
@@ -129,187 +149,7 @@ storage_context = StorageContext.from_defaults(vector_store=vector_store)
 # create your index
 index = VectorStoreIndex.from_documents(documents, storage_context=storage_context)
 \end{Verbatim}
-\
-\\
-\textbf{utils.py}
 
-\begin{Verbatim}[breaklines=true, breakanywhere=true]
-from passlib.context import CryptContext
-
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
-
-def hash(password: str) -> str:
-    return pwd_context.hash(password)
-
-
-def verify(password: str, hashed: str) -> bool:
-    return pwd_context.verify(password, hashed)
-
-\end{Verbatim}
-\
-\\
-\textbf{schemas.py}
-
-\begin{Verbatim}[breaklines=true, breakanywhere=true]
-from pydantic import BaseModel, EmailStr
-from datetime import datetime
-from typing import Optional
-from llama_index.llms import MessageRole
-from typing import List
-
-
-class UserCreate(BaseModel):
-    email: EmailStr
-    password: str
-
-
-class UserOut(BaseModel):
-    id: int
-    email: EmailStr
-    created_at: datetime
-
-    class Config:
-        from_attributes = True
-
-
-class UserLogin(BaseModel):
-    email: EmailStr
-    password: str
-
-    class Config:
-        from_attributes = True
-
-
-class Token(BaseModel):
-    access_token: str
-    token_type: str
-    user: UserOut
-
-
-class TokenData(BaseModel):
-    id: Optional[int] = None
-
-
-class ChatCreateOut(BaseModel):
-    id: int
-
-    class Config:
-        from_attributes = True
-
-
-class ChatOut(BaseModel):
-    id: int
-    history: Optional[List]
-    created_at: datetime
-
-    class Config:
-        from_attributes = True
-
-
-class History(BaseModel):
-    role: MessageRole
-    content: str
-
-
-class HistoryOut(BaseModel):
-    role: str
-    content: str
-
-\end{Verbatim}
-\
-\\
-\textbf{oauth2.py}
-
-\begin{Verbatim}[breaklines=true, breakanywhere=true]
-from jose import JWTError, jwt
-from datetime import datetime, timedelta
-from . import schemas, database, models
-from fastapi import Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer
-from sqlalchemy.orm import Session
-from .config import settings
-
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
-
-SECRET_KEY = settings.secret_key
-ALGORITHM = settings.algorithm
-ACCESS_TOKEN_EXPIRE_MINUTES = settings.access_token_expire_minutes
-
-
-def create_access_token(data: dict) -> str:
-    to_encode = data.copy()
-    expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    to_encode.update({"exp": expire})
-    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
-    return encoded_jwt
-
-
-def verify_access_token(token: str, credentials_exception):
-    try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        id: int = payload.get("user_id")  # type: ignore
-        if id is None:
-            raise credentials_exception
-        token_data = schemas.TokenData(id=id)
-        return token_data
-    except JWTError:
-        raise credentials_exception
-
-
-def get_current_user(
-    token: str = Depends(oauth2_scheme), db: Session = Depends(database.get_db)
-):
-    credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
-        headers={"WWW-Authenticate": "Bearer"},
-    )
-    token_data = verify_access_token(token, credentials_exception)
-    user = db.query(models.User).filter(models.User.id == token_data.id).first()
-    if not user:
-        raise credentials_exception
-    return user
-
-\end{Verbatim}
-
-\
-\\
-\textbf{models.py}
-
-\begin{Verbatim}[breaklines=true, breakanywhere=true]
-from .database import Base
-from sqlalchemy import Column, Integer, String, TIMESTAMP, text, ForeignKey
-from sqlalchemy.orm import relationship
-
-
-class User(Base):
-    __tablename__ = "users"
-
-    id = Column(Integer, primary_key=True, nullable=False)
-    email = Column(String, nullable=False, unique=True)
-    password = Column(String, nullable=False)
-    created_at = Column(
-        TIMESTAMP(timezone=True), nullable=False, server_default=text("now()")
-    )
-
-
-class Chat(Base):
-    __tablename__ = "chats"
-
-    id = Column(Integer, primary_key=True, nullable=False)
-    user_id = Column(
-        Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False
-    )
-    history = Column(String)
-
-    created_at = Column(
-        TIMESTAMP(timezone=True), nullable=False, server_default=text("now()")
-    )
-
-    owner = relationship("User")
-
-\end{Verbatim}
 \
 \\
 \textbf{main.py}
@@ -350,59 +190,6 @@ app.add_middleware(
 app.include_router(user.router)
 app.include_router(auth.router)
 app.include_router(chatsnc.router)
-\end{Verbatim}
-
-\
-\\
-\textbf{database.py}
-
-\begin{Verbatim}[breaklines=true, breakanywhere=true]
-from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
-from .config import settings
-
-SQLALCHEMY_DATABASE_URL = f"postgresql://{settings.database_username}:{settings.database_password}@{settings.database_hostname}:{settings.database_port}/{settings.database_name}"
-
-engine = create_engine(SQLALCHEMY_DATABASE_URL)
-
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-
-Base = declarative_base()
-
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-  
-\end{Verbatim}
-
-\
-\\
-\textbf{config.py}
-
-\begin{Verbatim}[breaklines=true, breakanywhere=true]
-from pydantic_settings import BaseSettings
-
-class Settings(BaseSettings):
-    database_hostname: str
-    database_port: str
-    database_password: str
-    database_username: str
-    database_name: str
-    secret_key: str
-    algorithm: str
-    access_token_expire_minutes: int
-    openai_api_key: str
-    app: str
-
-    class Config:
-        env_file = ".env"
-
-settings = Settings()  # type: ignore
 \end{Verbatim}
 
 \
@@ -628,279 +415,6 @@ def get_user(id: int, db: Session = Depends(get_db)):
     return user
 
 \end{Verbatim}
-
-\
-\\
-\textbf{main.ts}
-
-\begin{Verbatim}[breaklines=true, breakanywhere=true]
-import './assets/main.css'
-
-import { createApp } from 'vue'
-import { createPinia } from 'pinia'
-
-import App from './App.vue'
-import router from './router'
-import './axios'
-
-const app = createApp(App)
-
-app.use(createPinia())
-app.use(router)
-
-app.mount('#app')
-
-\end{Verbatim}
-
-\
-\\
-\textbf{utils.ts}
-
-\begin{Verbatim}[breaklines=true, breakanywhere=true]
-import { jwtDecode } from 'jwt-decode'
-
-export function isTokenExpired(token: string) {
-  const { exp } = jwtDecode<{ exp: number }>(token)
-  return Date.now() >= exp * 1000
-}  
-\end{Verbatim}
-
-\
-\\
-\textbf{axios.ts}
-
-\begin{Verbatim}[breaklines=true, breakanywhere=true]
-import axios from 'axios'
-
-axios.defaults.baseURL = import.meta.env.VITE_API_ENDPOINT
-\end{Verbatim}
-
-\
-\\
-\textbf{router/index.ts}
-
-\begin{Verbatim}[breaklines=true, breakanywhere=true]
-import { createRouter, createWebHistory } from 'vue-router'
-import ChatSNCVue from '../views/ChatSNC.vue'
-
-const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
-  routes: [
-    {
-      path: '/',
-      name: 'chatsnc',
-      component: ChatSNCVue,
-    },
-    {
-      path: '/login',
-      name: 'login',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/Login.vue'),
-    },
-    {
-      path: '/register',
-      name: 'register',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/Register.vue'),
-    },
-  ],
-})
-
-export default router
-\end{Verbatim}
-\
-\\
-\textbf{app.vue}
-
-\begin{Verbatim}[breaklines=true, breakanywhere=true]
-<script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
-import Nav from './components/Nav.vue'
-</script>
-
-<template>
-  <div class="relative h-full flex w-full text-gray-light overflow-hidden font-roboto">
-    <div class="flex-1 h-full max-w-full flex flex-col relative">
-      <Nav />
-      <div class="relative h-full w-full flex-1 overflow-auto transition-width">
-        <RouterView />
-      </div>
-    </div>
-  </div>
-</template>
-
-\end{Verbatim}
-\
-\\
-\textbf{Login.vue}
-
-\begin{Verbatim}[breaklines=true, breakanywhere=true]
-<template>
-  <div class="text-gray-light h-full flex-1 flex flex-col">
-    <div class="flex-1 overflow-hidden">
-      <div class="relative h-full">
-        <div class="flex h-full flex-col items-center justify-center">
-          <form class="flex flex-col gap-3 bg-gray-medium items-center px-10 py-8 rounded-md" @submit.prevent="loginUser">
-            <p class="text-center text-2xl font-medium mb-3">Login to ChatSNC</p>
-            <div class="flex flex-col gap-1">
-              <label for="email" class="text-base">Email</label>
-              <input type="email" id="username" name="username" class="bg-transparent border h-8 rounded-md w-60 pl-2 focus:outline-none focus:ring-1 ring-slate-300" v-model="data.username" />
-            </div>
-            <div class="flex flex-col gap-1">
-              <label for="password" class="text-base">Password</label>
-              <input type="password" id="password" name="password" class="bg-transparent border h-8 rounded-md w-60 pl-2 focus:outline-none focus:ring-1 ring-slate-300" v-model="data.password" />
-            </div>
-            <button class="text-gray-medium flex justify-center text-base bg-gray-light w-fit px-4 py-1 font-medium rounded-md">
-              <p v-if="!loading">Login</p>
-              <div v-else>
-                <svg class="w-6 h-6 mx-2 text-gray-medium animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle class="opacity-10" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                  <path fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-              </div>
-            </button>
-            <p v-if="error" class="text-red-500 text-sm">{{ error }}</p>
-            <p class="text-sm">Don't have an account? <router-link class="text-blue-primary" to="/register">Register</router-link></p>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>
-</template>
-
-<script lang="ts" setup>
-import axios from 'axios'
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
-
-const router = useRouter()
-
-const data = ref({
-  username: '',
-  password: '',
-})
-
-const loading = ref(false)
-
-const error = ref('')
-
-async function loginUser() {
-  try {
-    loading.value = true
-    const response = await axios.post(
-      'login',
-      {
-        username: data.value.username,
-        password: data.value.password,
-      },
-      {
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-      }
-    )
-    error.value = ''
-    console.log(response.data)
-    localStorage.setItem('token', response.data.access_token)
-    router.push('/')
-  } catch (e: any) {
-    if (e.response.status === 403) {
-      error.value = e.response.data.detail
-    }
-    if (e.response.status === 422) {
-      error.value = 'Enter a valid email and password'
-    }
-  } finally {
-    loading.value = false
-  }
-}
-</script>
-
-\end{Verbatim}
-\
-\\
-\textbf{Register.vue}
-
-\begin{Verbatim}[breaklines=true, breakanywhere=true]
-<template>
-  <div class="text-gray-light h-full flex-1 flex flex-col">
-    <div class="flex-1 overflow-hidden">
-      <div class="relative h-full">
-        <div class="flex h-full flex-col items-center justify-center">
-          <form class="flex flex-col gap-3 bg-gray-medium items-center px-10 py-8 rounded-md" @submit.prevent="registerUser">
-            <p class="text-center text-2xl font-medium mb-3">Register to ChatSNC</p>
-            <div class="flex flex-col gap-1">
-              <label for="email" class="text-base">Email</label>
-              <input type="email" id="email" name="email" class="bg-transparent border h-8 rounded-md w-60 pl-2 focus:outline-none focus:ring-1 ring-slate-300" v-model="data.email" />
-            </div>
-            <div class="flex flex-col gap-1">
-              <label for="password" class="text-base">Password</label>
-              <input type="password" id="password" name="password" class="bg-transparent border h-8 rounded-md w-60 pl-2 focus:outline-none focus:ring-1 ring-slate-300" v-model="data.password" />
-            </div>
-            <button class="text-gray-medium text-base bg-gray-light w-fit px-4 py-1 font-medium rounded-md">
-              <p v-if="!loading">Register</p>
-              <div v-else>
-                <svg class="w-6 h-6 mx-2 text-gray-medium animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle class="opacity-10" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                  <path fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-              </div>
-            </button>
-            <p v-if="error" class="text-red-500 text-sm">{{ error }}</p>
-            <p class="text-sm">Don't have an account? <router-link class="text-blue-primary" to="/login">Login</router-link></p>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>
-</template>
-
-<script lang="ts" setup>
-import axios from 'axios'
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
-
-const router = useRouter()
-
-const data = ref({
-  email: '',
-  password: '',
-})
-
-const loading = ref(false)
-
-const error = ref('')
-
-async function registerUser() {
-  try {
-    loading.value = true
-    const response = await axios.post('users/', {
-      email: data.value.email,
-      password: data.value.password,
-    })
-
-    error.value = ''
-    // redirect to login page
-    router.push('/login')
-  } catch (e: any) {
-    if (e.response.status === 403 || e.response.status === 400) {
-      error.value = e.response.data.detail
-    }
-    if (e.response.status === 422) {
-      error.value = 'Enter a valid email and password'
-    }
-  } finally {
-    loading.value = false
-  }
-}
-</script>
-
-\end{Verbatim}
-
 \
 \\
 \textbf{ChatSNC.vue}
@@ -1112,221 +626,160 @@ onMounted(() => {
 </script>
 \end{Verbatim}
 
-\
-\\
-\textbf{ChatDisplay.vue}
+\section{Unit Testing}
+
+Unit testing is a level of software testing where individual units or components of a software are tested. The purpose is to validate that each unit of the software code performs as expected. In this project, we have two main modules to test: the User module and the Chat module.
+
+\subsection{User Module}
+
+The User module is responsible for managing user data. This includes creating new users and handling user login. The tests for this module are defined in \textit{test\_users.py}. These tests ensure that the User module functions as expected, providing a solid foundation for the overall functionality of the chatbot application.\\\\
+\textbf{test\_users.py}
 
 \begin{Verbatim}[breaklines=true, breakanywhere=true]
-<template>
-  <div class="h-full w-full overflow-y-auto">
-    <div class="flex flex-col gap-6 px-4 py-4 md:px-0">
-      <div v-for="message in chat" :key="message.content" class="flex flex-col">
-        <div class="flex flex-col">
-          <p class="font-semibold">{{ message.role === 'user' ? 'You' : 'ChatSNC' }}</p>
-          <p class="whitespace-pre-wrap">{{ message.content }}</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</template>
+import pytest
+from jose import jwt
+from app import schemas
+from app.config import settings
 
-<script lang="ts" setup>
-type Chat = {
-  content: string
-  role: string
-}
 
-defineProps({
-  chat: {
-    type: Array<Chat>,
-    required: true,
-  },
-})
-</script>
+SECRET_KEY = settings.secret_key
+ALGORITHM = settings.algorithm
 
+
+def test_create_user(client):
+    response = client.post(
+        "/users/",
+        json={
+            "email": "test@example.com",
+            "password": "password",
+        },
+    )
+    new_user = schemas.UserOut(**response.json())
+    assert response.status_code == 201
+    assert new_user.email == "test@example.com"
+
+
+def test_login_user(client, test_user):
+    res = client.post(
+        "/login",
+        data={
+            "username": test_user["email"],
+            "password": test_user["password"],
+        },
+    )
+    login_res = schemas.Token(**res.json())
+    payload = jwt.decode(login_res.access_token, SECRET_KEY, algorithms=[ALGORITHM])
+    id = payload.get("user_id")
+    assert id == test_user["id"]
+    assert login_res.token_type == "bearer"
+    assert res.status_code == 200
+
+
+@pytest.mark.parametrize(
+    "email, password, status_code",
+    [
+        (
+            "wrongemail.@example.com",
+            "password",
+            403,
+        ),
+        (
+            "test@example.com",
+            "wrongpassword",
+            403,
+        ),
+        (
+            "wrongemail@example.com",
+            "wrongpassword",
+            403,
+        ),
+        (
+            None,
+            "password",
+            422,
+        ),
+        (
+            "test@example.com",
+            None,
+            422,
+        ),
+    ],
+)
+def test_invalid_login(client, test_user, email, password, status_code):
+    res = client.post(
+        "/login",
+        data={
+            "username": email,
+            "password": password,
+        },
+    )
+    assert res.status_code == status_code
 \end{Verbatim}
-\
-\\
-\textbf{History.vue}
+
+\subsection{Chat Module}
+
+The Chat module is responsible for managing chat data. This includes retrieving all chats, retrieving a single chat, creating a new chat, and updating an existing chat. The tests for this module are defined in \textit{test\_chats.py}.\\\\
+\textbf{test\_chats.py}
 
 \begin{Verbatim}[breaklines=true, breakanywhere=true]
-<template>
-  <div class="w-full md:w-4/12 hidden md:flex self-start text-gray-light border border-gray mt-8 rounded-md shadow-lg py-4 px-4">
-    <div class="flex w-full flex-col gap-2">
-      <h1 class="text-lg font-bold ml-2">Recent Chats</h1>
-      <div v-if="loading" class="flex w-full justify-center items-center">
-        <div class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-gray-light"></div>
-      </div>
-      <div class="flex w-full gap-2 flex-col">
-        <div
-          v-for="(item, index) in history.slice(0, 10)"
-          class="flex w-full cursor-pointer py-2 px-3 hover:bg-gray-medium transition flex-col gap-2 border-b rounded-md bg-gray-medium border-gray hover:border-l-4 hover:border-orange-300"
-          :key="index"
-          @click="$emit('getChat', item.id)"
-        >
-          <div class="flex flex-row w-full">
-            <div class="text-sm w-full overflow-ellipsis overflow-hidden whitespace-nowrap">{{ displayString(item.chats) }}</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</template>
+from app import schemas
 
-<script lang="ts" setup>
-import { ref, onMounted, onRenderTriggered } from 'vue'
-import type { Ref } from 'vue'
-import axios from 'axios'
+def test_get_all_chats(authorized_client, test_chats):
+    res = authorized_client.get("/chat/")
+    posts_list = [schemas.ChatOut(**chat) for chat in res.json()]
+    assert len(res.json()) == len(test_chats)
+    assert res.status_code == 200
 
-const loading = ref(false)
 
-type Chat = {
-  content: string
-  role: string
-}
+def test_unauthorized_user_get_all_chats(client, test_chats):
+    res = client.get("/chat/")
+    assert res.status_code == 401
 
-type History = {
-  id: number
-  chats: Chat[]
-}
 
-const history: Ref<History[]> = ref([])
+def test_unauthorized_user_get_one_chat(client, test_chats):
+    res = client.get(f"/chat/{test_chats[0].id}")
+    assert res.status_code == 401
 
-function displayString(item: any) {
-  return item[0].content
-}
 
-async function getChats() {
-  try {
-    loading.value = true
-    const response = await axios.get('chat/', {
-      headers: {
-        Authorization: 'Bearer ' + localStorage.getItem('token'),
-      },
-    })
-    console.log(response.data)
-    for (const item of response.data) {
-      if (item.history) {
-        history.value.push({
-          id: item.id,
-          chats: item.history,
-        })
-      }
-    }
-    console.log(history.value)
-  } catch (e: any) {
-  } finally {
-    loading.value = false
-  }
-}
+def test_get_one_chat_not_found(authorized_client, test_chats):
+    res = authorized_client.get("/chat/999")
+    assert res.status_code == 404
 
-onMounted(() => {
-  getChats()
-})
 
-onRenderTriggered(() => {
-  getChats()
-})
-</script>
+def test_get_one_chat(authorized_client, test_chats):
+    res = authorized_client.get(f"/chat/{test_chats[0].id}")
+    assert res.status_code == 200
+    assert str(res.json()) == test_chats[0].history
 
+
+def test_create_chat(authorized_client, test_user):
+    res = authorized_client.post("/chat/")
+    created_chat = schemas.ChatCreateOut(**res.json())
+    assert res.status_code == 201
+
+
+def test_unauthorized_user_create_chat(client):
+    res = client.post("/chat/")
+    assert res.status_code == 401
+
+
+def test_unauthorized_user_update_chat(client, test_chats):
+    res = client.put(f"/chat/{test_chats[0].id}", json={"history": []})
+    assert res.status_code == 401
+
+
+def test_update_chat(authorized_client, test_chats):
+    new_history = [{"role": "user", "content": "Updated message"}]
+    res = authorized_client.put(f"/chat/{test_chats[0].id}", json=new_history)
+    assert res.status_code == 200
+    assert res.json()["message"] == "Chat updated successfully"
+
+
+def test_update_chat_not_found(authorized_client):
+    new_history = [{"role": "user", "content": "Updated message"}]
+    res = authorized_client.put("/chat/999", json=new_history)
+
+    assert res.status_code == 404
 \end{Verbatim}
 
-\
-\\
-\textbf{Nav.vue}
 
-\begin{Verbatim}[breaklines=true, breakanywhere=true]
-<template>
-  <div class="w-full px-4 md:px-12 flex sticky top-0 z-10 min-h-[40px] shadow-md shadow-shadow py-3 justify-between items-center">
-    <p class="text-xl font-bold">ChatSNC</p>
-    <div v-if="isUserInHomePage()" class="cursor-pointer" @click="logoutUser">
-      <svg width="36" height="36" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="25" cy="25" r="24" stroke="#dedede" stroke-width="2" />
-        <path
-          d="M15 37V12H27.5V14.7778H17.7778V34.2222H27.5V37H15ZM33.0556 31.4444L31.1458 29.4306L34.6875 25.8889H23.3333V23.1111H34.6875L31.1458 19.5694L33.0556 17.5556L40 24.5L33.0556 31.4444Z"
-          fill="#dedede"
-        />
-      </svg>
-    </div>
-  </div>
-</template>
-
-<script lang="ts" setup>
-import { useRouter } from 'vue-router'
-import axios from 'axios'
-
-const router = useRouter()
-
-// check if user is in home page
-function isUserInHomePage() {
-  return router.currentRoute.value.path === '/'
-}
-
-function logoutUser() {
-  localStorage.removeItem('token')
-  axios.defaults.headers.common['Authorization'] = ''
-  router.push('/login')
-}
-</script>
-
-\end{Verbatim}
-\
-\\
-\textbf{OpeningScreen.vue}
-
-\begin{Verbatim}[breaklines=true, breakanywhere=true]
-<template>
-  <div class="flex h-full flex-col items-center justify-center">
-    <div class="flex flex-col px-4 md:px-0 items-center gap-6">
-      <p class="text-2xl md:text-2xl mb-4 text-center text-gray-light font-medium">
-        Ask about the website content of <a href="https://snckollam.ac.in/" target="_blank" class="transition text-blue-200 hover:underline hover:text-gray-light">SN College</a>
-      </p>
-      <div class="flex flex-col md:flex-row gap-2">
-        <button
-          v-for="query in sampleQueries"
-          :key="String(query)"
-          class="text-orange-100 text-base pl-6 pr-6 hover:shadow-md transition hover:shadow-gray py-5 border text-left border-orange-100 rounded-3xl flex align-top font-normal"
-          @click="$emit('submitSampleQuery', query)"
-        >
-          >> {{ query }}
-        </button>
-      </div>
-      <p class="text-sm text-gray-light">- Please do not enter any private or sensitive information.</p>
-    </div>
-  </div>
-</template>
-
-<script lang="ts" setup>
-defineProps({
-  sampleQueries: {
-    type: Array,
-    required: true,
-  },
-})
-</script>
-
-\end{Verbatim}
-
-\
-\\
-\textbf{index.html}
-
-\begin{Verbatim}[breaklines=true, breakanywhere=true]
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" href="./favicon.ico" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ChatSNC</title>
-  </head>
-  <body>
-    <div id="app"></div>
-    <script type="module" src="/src/main.ts"></script>
-  </body>
-</html>
-
-\end{Verbatim}

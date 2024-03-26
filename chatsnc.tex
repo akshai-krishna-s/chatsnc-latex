@@ -14,6 +14,8 @@
 \usepackage{fvextra}
 \usepackage{listings}
 \usepackage{color} % for setting colors
+\def\arraystretch{1.5}
+
 
 % set the default code style for Python
 \lstset{
@@ -71,7 +73,7 @@
 \gdef\college{Sree Narayana College, Kollam} % Name of the College
 \gdef\collegeplace{Trivandrum} % Location of the College
 \gdef\studentA{Abil Asok} %Project batch member 1
-\gdef\studentAroll{32821132001} % Project batch member 1 ktu id
+\gdef\studentAroll{32821132002} % Project batch member 1 ktu id
 \gdef\studentB{Indrajith R} %Project batch member 2
 \gdef\studentBroll{32821132009} % Project batch member 2 ktu id
 
@@ -91,10 +93,10 @@
 \gdef\guideextdes{Engineer/Scientist}%project external guide designation
 \gdef\guideextorg{External guide organization} % Project external guide organization
 
-\gdef\projcordinatorA{Smt. Athira}% Project coordinator 1 
+\gdef\projcordinatorA{Smt. Athira Rajendran}% Project coordinator 1 
 \gdef\projcordinatorAdes{Assistant Professor}% Project coordinator 1 designation
 
-\gdef\projcordinatorB{Prof.\ Project coordinator 2} % Project coordinator 2 
+\gdef\projcordinatorB{Smt.\ Surya} % Project coordinator 2 
 \gdef\projcordinatorBdes{Assistant Professor}% Seminar coordinator 2 designation
 
 \gdef\hod{Smt. Asitha L. R} %Head of Department
@@ -132,11 +134,13 @@
 
 \include{system-coding}
 
+\include{system_testing}
+
 \appendix
 \include{appendix}
 
-\bibliography{mybib}
 
+\bibliography{mybib}
 
 \end{document}
 
