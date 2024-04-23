@@ -23,8 +23,7 @@
 
 \begin{table}[h!]
   \centering
-  \caption{Program List}
-  \vspace*{10pt}
+  
   \begin{tabular}{|p{4cm}|p{8cm}|}
     \hline
     \multicolumn{1}{|c|}{\textbf{Program Name}} & \multicolumn{1}{c|}{\textbf{Description}}\\ \hline
@@ -35,6 +34,9 @@
     chatsnc.py & ChatSNC routes\\ \hline
     user.py & User routes\\ \hline
   \end{tabular}
+  \vspace*{8pt}
+
+  \caption{Program List}
 \end{table}
 
 \subsection{Program Code}
@@ -207,7 +209,7 @@ router = APIRouter(
     tags=["Authentication"],
 )
 
-
+ 
 @router.post("/login", status_code=status.HTTP_200_OK, response_model=schemas.Token)
 def login(
     user_credentials: OAuth2PasswordRequestForm = Depends(),

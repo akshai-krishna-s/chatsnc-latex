@@ -52,8 +52,6 @@ The database for this chatbot application is designed using PostgreSQL, a powerf
 
 \begin{table}[h!]
   \centering
-  \caption{users}
-  \vspace*{10pt}
   \begin{tabular}{|c|c|c|c|}
     \hline
     Field Name & Data type & Constraints & Description\\ \hline
@@ -62,14 +60,15 @@ The database for this chatbot application is designed using PostgreSQL, a powerf
     password & character varying & Not Null & User's password\\ \hline
     created\_at & timestamp & Not Null & Timestamp of user creation\\ \hline
   \end{tabular}
+  \vspace*{7pt}
+
+  \caption{users}
 \end{table}
 
 \subsection{Chats Table}
 
 \begin{table}[h!]
   \centering
-  \caption{chats}
-  \vspace*{10pt}
   \begin{tabular}{|c|c|c|c|}
     \hline
     Field Name & Data type & Constraints & Description\\ \hline
@@ -78,5 +77,8 @@ The database for this chatbot application is designed using PostgreSQL, a powerf
     history & character varying & Not Null & Chat history\\ \hline
     created\_at & timestamp & Not Null & Timestamp of chat creation\\ \hline
   \end{tabular}
+  \vspace*{7pt}
+  \caption{chats}
+
 \end{table}
 
